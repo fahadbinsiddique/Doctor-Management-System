@@ -1,0 +1,66 @@
+{% extends 'master/base.html' %}
+
+
+{% block blockname %}
+<div class="my-3">
+  <div class="btn-group" role="group" aria-label="Basic example">
+  <button type="button" class="btn btn-secondary">Username: {{request.user}}</button>
+  <button type="button" class="btn btn-secondary">User Type: {{request.user.user_type}}</button>
+  <button type="button" class="btn btn-secondary">Full Name: {{request.user.full_name}}</button>
+</div>
+
+<div class="btn-group "  role="group" aria-label="Basic example">
+  <a href="{% url 'add_doctor' %}"><button type="button"  class="btn btn-primary">Add Doctor</button></a>
+</div>
+</div>
+
+
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Name</th>
+      <th scope="col">Email</th>
+      <th scope="col">Phone</th>
+      <th scope="col">specialization</th>
+      <th scope="col">Department</th>
+      <th scope="col">Joining Date</th>
+      <th scope="col">Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+        
+        {% for x in form_data %}
+            
+       
+            
+      <th scope="row">{{forloop.counter}}</th>
+      <td><div>
+       <span> {{x.name}}</span>  <span><a href="{% url 'view_doctor' x.id %}"><button type="button" class="btn btn-outline-primary btn-sm">View Paitents</button></a></span>
+      </div></td>
+      <td>{{x.email}}</td>
+      <td>{{x.phone}}</td>
+      <td>{{x.specialization}}</td>
+      <td>{{x.department}}</td>
+      <td>{{x.joining_date}}</td>
+      
+      <td>
+          
+          <div class="btn-group" role="group" aria-label="Basic example">
+            <a href="{% url 'edit_doctor' x.id %}"><button type="button" class="btn btn-info">Edit</button></a>
+            <a href="{% url 'delete_doctor' x.id %}"><button type="button" class="btn btn-secondary">Delete</button></a>
+            <a href="{% url 'view_doctor' x.id %}"><button type="button" class="btn btn-primary">View</button></a>
+           
+ 
+</div>
+      </td>
+    </tr>
+    {% endfor %}
+    
+  </tbody>
+</table>
+    
+{% endblock blockname %}
+    

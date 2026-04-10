@@ -1,0 +1,13 @@
+{% extends 'master/base.html' %} 
+
+{% block blockname %}
+
+<div class="container">
+  
+  <form action="" method="POST">
+    {% csrf_token %} {{form_data.as_p}}
+
+    <button type="submit" class="btn btn-primary mb-5">{{btn}}</button>
+  </form>
+</div>
+{% endblock blockname %}
