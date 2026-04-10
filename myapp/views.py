@@ -54,6 +54,11 @@ def login_page(request):
 
 
 def dashboard(request):
+
+    return render(request, "dashboard.html")
+
+
+def home(request):
     return render(request, "dashboard.html")
 
 
@@ -82,7 +87,7 @@ def department_list(request):
     form_data = DepartmentModel.objects.all()
     context = {
         "form_data": form_data,
-        "heading": "All Department Info",
+        "heading": "All Department List",
         "title": "Department List",
     }
     return render(request, "department/department_list.html", context)
@@ -162,7 +167,7 @@ def edit_doctor(request, d_id):
 
 def view_doctor(request, d_id):
     form_data = DoctorModel.objects.get(id=d_id)
-    patient_data=PatientModel.objects.all()
+    patient_data = PatientModel.objects.all()
     context = {"form_data": form_data, "title": "view", "patient_data": patient_data}
     return render(request, "doctor/view_doctor.html", context)
 

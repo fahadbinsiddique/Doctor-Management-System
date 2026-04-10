@@ -1,59 +1,59 @@
 {% extends 'master/base.html' %}
 
-
 {% block blockname %}
-<div class="my-4">
-  <div class="btn-group" role="group" aria-label="Basic example">
-  <button type="button" class="btn btn-secondary">Username: {{request.user}}</button>
-  <button type="button" class="btn btn-secondary">User Type: {{request.user.user_type}}</button>
-  <button type="button" class="btn btn-secondary">Full Name: {{request.user.full_name}}</button>
-</div>
+  <div class="mt-4">
+    <div class="btn-group" role="group" aria-label="Basic example">
+      <button type="button" class="btn btn-secondary">Full Name: {{ request.user.full_name }}</button>
+      <button type="button" class="btn btn-secondary">User Type: {{ request.user.user_type }}</button>
+      <button type="button" class="btn btn-secondary">Username: {{ request.user }}</button>
+    </div>
+  </div>
 
-<div class="btn-group "  role="group" aria-label="Basic example">
-  <a href="{% url 'add_department' %}"><button type="button"  class="btn btn-primary">Add Department</button></a>
-</div>
+  {% if request.user.user_type == 'Admin' %}
+    <div class="btn-group my-2" role="group" aria-label="Basic example">
+      <a href="{% url 'add_department' %}"><button type="button" class="btn btn-primary">Add Department</button></a>
+    </div>
+  {% endif %}
 
-</div>
+  <table class="table table-striped my-2">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Name</th>
+        <th scope="col">Description</th>
+        <th scope="col">created_at</th>
 
+        {% if request.user.user_type == 'Admin' %}
+          <th scope="col">Action</th>
+        {% endif %}
+      </tr>
+    </thead>
 
-<table class="table table-striped">
-  <thead>
-    <tr>
-      <th scope="col">#</th>
-      <th scope="col">Name</th>
-      <th scope="col">Description</th>
-      <th scope="col">created_at</th>
-      <th scope="col">Action</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-        
-        {% for x in form_data %}
-            
-       
-            
-      <th scope="row">{{forloop.counter}}</th>
-      <td><div>
-       <span> {{x.name}}</span>  <span><a href="{% url 'view_department' x.id %}"><button type="button" class="btn btn-outline-primary btn-sm">View Doctors</button></a></span>
-      </div></td>
-      <td>{{x.description}}</td>
-      <td>{{x.created_at}}</td>
-      <td>
-          
-          <div class="btn-group" role="group" aria-label="Basic example">
-            <a href="{% url 'edit_department' x.id %}"><button type="button" class="btn btn-info btn-sm">Edit</button></a>
-            <a href="{% url 'delete_department' x.id %}"><button type="button" class="btn btn-secondary btn-sm">Delete</button></a>
-            <a href="{% url 'view_department' x.id %}"><button type="button" class="btn btn-primary btn-sm">View</button></a>
-           
- 
-</div>
-      </td>
-    </tr>
-    {% endfor %}
-    
-  </tbody>
-</table>
-    
-{% endblock blockname %}
-    
+    <tbody>
+      {% for x in form_data %}
+        <tr>
+          <th scope="row">{{ forloop.counter }}</th>
+
+          <td>
+            <div>
+              <span>{{ x.name }}</span> <span><a href="{% url 'view_department' x.id %}"><button type="button" class="btn btn-outline-primary btn-sm">View Doctors</button></a></span>
+            </div>
+          </td>
+
+          <td>{{ x.description }}</td>
+          <td>{{ x.created_at }}</td>
+
+          {% if request.user.user_type == 'Admin' %}
+            <td>
+              <div class="btn-group" role="group" aria-label="Basic example">
+                <a href="{% url 'edit_department' x.id %}"><button type="button" class="btn btn-info btn-sm">Edit</button></a>
+                <a href="{% url 'delete_department' x.id %}"><button type="button" class="btn btn-secondary btn-sm">Delete</button></a>
+                <a href="{% url 'view_department' x.id %}"><button type="button" class="btn btn-primary btn-sm">View</button></a>
+              </div>
+            </td>
+          {% endif %}
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

@@ -1,102 +1,81 @@
 {% extends 'master/base.html' %}
 
-
 {% block blockname %}
-<div class="btn-group" role="group" aria-label="Basic example">
-  <button type="button" class="btn btn-secondary">Username: {{request.user}}</button>
-  <button type="button" class="btn btn-secondary">User Type: {{request.user.user_type}}</button>
-  <button type="button" class="btn btn-secondary">Full Name: {{request.user.full_name}}</button>
-</div>
+  <div class="btn-group" role="group" aria-label="Basic example">
+    <button type="button" class="btn btn-secondary">Username: {{ request.user }}</button>
+    <button type="button" class="btn btn-secondary">User Type: {{ request.user.user_type }}</button>
+    <button type="button" class="btn btn-secondary">Full Name: {{ request.user.full_name }}</button>
+  </div>
 
-<div class="btn-group "  role="group" aria-label="Basic example">
-  <a href="{% url 'add_doctor' %}"><button type="button"  class="btn btn-primary">Add Doctor</button></a>
-</div>
-<div class="btn-group "  role="group" aria-label="Basic example">
-  <a href="{% url 'doctor_list' %}"><button type="button"  class="btn btn-info">Return Doctor List</button></a>
-</div>
+  {% if request.user.user_type == 'Admin' %}
+    <div class="btn-group" role="group" aria-label="Basic example">
+      <a href="{% url 'add_doctor' %}"><button type="button" class="btn btn-primary">Add Doctor</button></a>
+    </div>
+  {% endif %}
 
+  <div class="btn-group" role="group" aria-label="Basic example">
+    <a href="{% url 'doctor_list' %}"><button type="button" class="btn btn-info">Return Doctor List</button></a>
+  </div>
 
-<div class="mt-4 mb-2">
-  <button type="button" class="btn btn-outline-secondary">Doctor Name</button>
-</div>
-<table class="table table-striped">
-  <thead>
-    <tr>
-      <th scope="col">Name</th>
-      <th scope="col">Email</th>
-      <th scope="col">Phone</th>
-      <th scope="col">specialization</th>
-      <th scope="col">Department</th>
-      <th scope="col">Joining Date</th>
-     
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-        
-        
-            
-       
-            
-      <td>{{form_data.name}}</td>
-      <td>{{form_data.email}}</td>
-      <td>{{form_data.phone}}</td>
-      <td>{{form_data.specialization}}</td>
-      <td>{{form_data.department}}</td>
-      <td>{{form_data.joining_date}}</td>
-      
-    
-    </tr>
-   
-    
-  </tbody>
-</table>
+  <div class="mt-4 mb-2">
+    <button type="button" class="btn btn-outline-secondary">Doctor Name</button>
+  </div>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th scope="col">Name</th>
+        <th scope="col">Email</th>
+        <th scope="col">Phone</th>
+        <th scope="col">specialization</th>
+        <th scope="col">Department</th>
+        <th scope="col">Joining Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>{{ form_data.name }}</td>
+        <td>{{ form_data.email }}</td>
+        <td>{{ form_data.phone }}</td>
+        <td>{{ form_data.specialization }}</td>
+        <td>{{ form_data.department }}</td>
+        <td>{{ form_data.joining_date }}</td>
+      </tr>
+    </tbody>
+  </table>
 
+  {% if request.user.user_type == 'Patient' %}
 
-
-<div class="mt-4 mb-2">
-  <button type="button" class="btn btn-outline-secondary">Patient List</button>
-</div>
-<table class="table table-striped">
-  <thead>
-    <tr>
-      <th scope="col">#</th>
-      <th scope="col">Name</th>
-      <th scope="col">Age</th>
-      <th scope="col">Gender</th>
-      <th scope="col">Disease</th>
-      <th scope="col">Doctor</th>
-      <th scope="col">Admit_date</th>
-      
-     
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-        
+  {% else %}
+    <div class="mt-4 mb-2">
+      <button type="button" class="btn btn-outline-secondary">Patient List</button>
+    </div>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Name</th>
+          <th scope="col">Age</th>
+          <th scope="col">Gender</th>
+          <th scope="col">Disease</th>
+          <th scope="col">Doctor</th>
+          <th scope="col">Admit_date</th>
+        </tr>
+      </thead>
+      <tbody>
         {% for x in patient_data %}
-            
-       
-      
-      {% if x.doctor == form_data %}
-        
-      
-           
-      <th scope="row">{{forloop.counter}}</th>
-      <td>{{x.name}}</td>
-      <td>{{x.age}}</td>
-      <td>{{x.gender}}</td>
-      <td>{{x.disease}}</td>
-      <td>{{x.doctor}}</td>
-      <td>{{x.admit_date}}</td>
-      {% endif %}
-      
-  
-    </tr>
-    {% endfor %}
-    
-  </tbody>
-</table>
-    
-{% endblock blockname %}
-    
+          <tr>
+            {% if x.doctor == form_data %}
+              <th scope="row">{{ forloop.counter }}</th>
+              <td>{{ x.name }}</td>
+              <td>{{ x.age }}</td>
+              <td>{{ x.gender }}</td>
+              <td>{{ x.disease }}</td>
+              <td>{{ x.doctor }}</td>
+              <td>{{ x.admit_date }}</td>
+            {% endif %}
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% endif %}
+{% endblock %}
