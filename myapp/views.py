@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from myapp.models import *
 from myapp.forms import *
 from django.contrib.auth import login, logout
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 
@@ -53,20 +54,24 @@ def login_page(request):
     return render(request, "login.html", context)
 
 
+@login_required
 def dashboard(request):
 
     return render(request, "dashboard.html")
 
 
 def home(request):
-    return render(request, "dashboard.html")
+
+    return render(request, "home.html")
 
 
+@login_required
 def logout_page(request):
     logout(request)
     return redirect("login_page")
 
 
+@login_required
 def add_department(request):
     if request.method == "POST":
         form_data = Add_Department_Form(request.POST)
@@ -83,6 +88,7 @@ def add_department(request):
     return render(request, "master/base-form.html", context)
 
 
+@login_required
 def department_list(request):
     form_data = DepartmentModel.objects.all()
     context = {
@@ -93,6 +99,7 @@ def department_list(request):
     return render(request, "department/department_list.html", context)
 
 
+@login_required
 def edit_department(request, d_id):
     selected_department = DepartmentModel.objects.get(id=d_id)
     if request.method == "POST":
@@ -110,6 +117,7 @@ def edit_department(request, d_id):
     return render(request, "master/base-form.html", context)
 
 
+@login_required
 def view_department(request, d_id):
     form_data = DepartmentModel.objects.get(id=d_id)
     all_doctor = DoctorModel.objects.all()
@@ -117,11 +125,13 @@ def view_department(request, d_id):
     return render(request, "department/view_department.html", context)
 
 
+@login_required
 def delete_department(request, d_id):
     DepartmentModel.objects.get(id=d_id).delete()
     return redirect("department_list")
 
 
+@login_required
 def add_doctor(request):
     if request.method == "POST":
         form_data = Add_Doctor_Form(request.POST)
@@ -138,6 +148,7 @@ def add_doctor(request):
     return render(request, "master/base-form.html", context)
 
 
+@login_required
 def doctor_list(request):
     form_data = DoctorModel.objects.all()
     context = {
@@ -148,6 +159,7 @@ def doctor_list(request):
     return render(request, "doctor/doctor_list.html", context)
 
 
+@login_required
 def edit_doctor(request, d_id):
     selected_department = DoctorModel.objects.get(id=d_id)
     if request.method == "POST":
@@ -165,6 +177,7 @@ def edit_doctor(request, d_id):
     return render(request, "master/base-form.html", context)
 
 
+@login_required
 def view_doctor(request, d_id):
     form_data = DoctorModel.objects.get(id=d_id)
     patient_data = PatientModel.objects.all()
@@ -172,11 +185,13 @@ def view_doctor(request, d_id):
     return render(request, "doctor/view_doctor.html", context)
 
 
+@login_required
 def delete_doctor(request, d_id):
     DoctorModel.objects.get(id=d_id).delete()
     return redirect("doctor_list")
 
 
+@login_required
 def add_patient(request):
     if request.method == "POST":
         form_data = Add_Patient_Form(request.POST)
@@ -193,6 +208,7 @@ def add_patient(request):
     return render(request, "master/base-form.html", context)
 
 
+@login_required
 def patient_list(request):
     form_data = PatientModel.objects.all()
     context = {
@@ -203,6 +219,7 @@ def patient_list(request):
     return render(request, "patient/patient_list.html", context)
 
 
+@login_required
 def edit_patient(request, d_id):
     selected_department = PatientModel.objects.get(id=d_id)
     if request.method == "POST":
@@ -220,12 +237,14 @@ def edit_patient(request, d_id):
     return render(request, "master/base-form.html", context)
 
 
+@login_required
 def view_patient(request, d_id):
     form_data = PatientModel.objects.get(id=d_id)
     context = {"form_data": form_data, "title": "view"}
     return render(request, "patient/view_patient.html", context)
 
 
+@login_required
 def delete_patient(request, d_id):
     PatientModel.objects.get(id=d_id).delete()
     return redirect("patient_list")

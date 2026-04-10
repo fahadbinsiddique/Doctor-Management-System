@@ -41,7 +41,12 @@
           <th scope="row">{{ forloop.counter }}</th>
           <td>
             <div>
-              <span>{{ x.name }}</span> <span><a href="{% url 'view_doctor' x.id %}"><button type="button" class="btn btn-outline-primary btn-sm">View Paitents</button></a></span>
+              <span>{{ x.name }}</span>
+              {% if request.user.user_type == 'Patient' %}
+
+              {% else %}
+                <span><a href="{% url 'view_doctor' x.id %}"><button type="button" class="btn btn-outline-primary btn-sm">View Paitents</button></a></span>
+              {% endif %}
             </div>
           </td>
           <td>{{ x.email }}</td>
