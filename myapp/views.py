@@ -7,6 +7,23 @@ from django.contrib.auth.decorators import login_required
 # Create your views here.
 
 
+def register_admin(request):
+    if request.method == "POST":
+        form_data = RegisterForm(request.POST)
+        if form_data.is_valid():
+            user_data = form_data.save(commit=False)
+            user_data.user_type = "Admin"
+            user_data.save()
+            return redirect("login_page")
+    form_data = RegisterForm()
+    context = {
+        "form_data": form_data,
+        "title": "Add Admin Register",
+        "btn": "Add Admin",
+    }
+    return render(request, "register.html", context)
+
+
 def register_patient(request):
     if request.method == "POST":
         form_data = RegisterForm(request.POST)
