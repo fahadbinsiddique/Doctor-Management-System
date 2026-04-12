@@ -8,6 +8,7 @@ urlpatterns = [
     path("register-doctor/", register_doctor, name="register_doctor"),
     path("login/", login_page, name="login_page"),
     path("dashboard/", dashboard, name="dashboard"),
+    path("profile/", profile, name="profile"),
     path("logout/", logout_page, name="logout_page"),
     path("add-department/", add_department, name="add_department"),
     path("department-list/", department_list, name="department_list"),

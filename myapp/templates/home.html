@@ -1,24 +1,15 @@
-
-
-
-
 {% extends 'master/base.html' %}
 
-
-
 {% block blockname %}
-    
+  <h3>User Name- {{ request.user }}</h3>
 
-    
+  <h3>User Type- {{ request.user.user_type }}</h3>
 
-<h3>User Name-   {{request.user}}</h3>
-<h3>User Type-   {{request.user.user_type}}</h3>
+  <h1><a href="{% url 'login_page' %}">Login</a></h1>
 
+  <h1><a href="{% url 'register_admin' %}">Registration as Admin</a></h1>
 
-<h1><a href="{% url 'login_page' %}">Login</a></h1>
-
-<h1><a href="{% url 'register_admin' %}">Registration as Admin</a></h1>
-<h1><a href="{% url 'register_doctor' %}">Registration as Doctor</a></h1>
-<h1><a href="{% url 'register_patient' %}">Registration as Patient</a></h1>
-
-{% endblock blockname %}
+  <h1><a href="{% url 'register_doctor' %}">Registration as Doctor</a></h1>
+  <h1><a href="{% url 'register_patient' %}">Registration as Patient</a></h1>
+  
+{% endblock %}

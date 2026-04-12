@@ -14,6 +14,22 @@ class UserInfoModel(AbstractUser):
     address = models.TextField(null=True)
     user_type = models.CharField(choices=USER_TYPE, max_length=20, null=True)
 
+    def __str__(self):
+        return f'{self.username}'
+
+class ProfileModel(models.Model):
+    user=models.OneToOneField(
+        UserInfoModel,
+        on_delete=models.CASCADE,
+        related_name='user_profile',
+        null=True,
+    )
+    profile_pic=models.ImageField(upload_to='media/',null=True)
+    phone_number=models.CharField(max_length=20, null=True)
+
+    def __str__(self):
+        return f'{self.user}'
+
 
 class DepartmentModel(models.Model):
 
