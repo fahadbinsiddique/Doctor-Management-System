@@ -1,41 +1,62 @@
 {% extends 'master/base.html' %}
+{% block nav_pat %}active{% endblock %}
+{% block page_title %}{{ form_data.name }}{% endblock %}
 
 {% block blockname %}
-  <div class="btn-group" role="group" aria-label="Basic example">
-    <button type="button" class="btn btn-secondary">Username: {{ request.user }}</button>
-    <button type="button" class="btn btn-secondary">User Type: {{ request.user.user_type }}</button>
-    <button type="button" class="btn btn-secondary">Full Name: {{ request.user.full_name }}</button>
+<div class="page-header">
+  <div class="d-flex align-items-center gap-2 flex-wrap">
+    <a href="{% url 'patient_list' %}" class="btn btn-outline-secondary btn-sm">
+      <i class="bi bi-arrow-left me-1"></i>Patients
+    </a>
+    <h1 class="mb-0">{{ form_data.name }}</h1>
   </div>
+  {% if request.user.user_type != 'Patient' %}
+    <div class="d-flex gap-2">
+      <a href="{% url 'edit_patient' form_data.id %}" class="btn btn-outline-primary btn-sm">
+        <i class="bi bi-pencil me-1"></i>Edit
+      </a>
+      <a href="{% url 'add_patient' %}" class="btn btn-primary btn-sm">
+        <i class="bi bi-plus-lg me-1"></i>Add Patient
+      </a>
+    </div>
+  {% endif %}
+</div>
 
-  <div class="btn-group" role="group" aria-label="Basic example">
-    <a href="{% url 'add_patient' %}"><button type="button" class="btn btn-primary">Add Patient</button></a>
+<!-- Patient info card -->
+<div class="card" style="max-width:640px;">
+  <div class="card-body p-4">
+    <div class="d-flex align-items-center gap-3 mb-4">
+      <div style="width:56px;height:56px;background:#fff7ed;border-radius:14px;display:flex;align-items:center;justify-content:center;color:#d97706;font-size:1.5rem;flex-shrink:0;">
+        <i class="bi bi-person-heart"></i>
+      </div>
+      <div>
+        <div class="fw-bold" style="font-size:1.1rem;">{{ form_data.name }}</div>
+        <div class="text-muted" style="font-size:.875rem;">Patient</div>
+      </div>
+    </div>
+
+    <div class="row g-3">
+      <div class="col-sm-4">
+        <div class="text-muted" style="font-size:.78rem;font-weight:600;text-transform:uppercase;">Age</div>
+        <div class="fw-semibold mt-1">{{ form_data.age }} years</div>
+      </div>
+      <div class="col-sm-4">
+        <div class="text-muted" style="font-size:.78rem;font-weight:600;text-transform:uppercase;">Gender</div>
+        <div class="fw-semibold mt-1">{{ form_data.gender }}</div>
+      </div>
+      <div class="col-sm-4">
+        <div class="text-muted" style="font-size:.78rem;font-weight:600;text-transform:uppercase;">Admit Date</div>
+        <div class="fw-semibold mt-1">{{ form_data.admit_date|date:"M d, Y" }}</div>
+      </div>
+      <div class="col-sm-6">
+        <div class="text-muted" style="font-size:.78rem;font-weight:600;text-transform:uppercase;">Assigned Doctor</div>
+        <div class="fw-semibold mt-1">{{ form_data.doctor }}</div>
+      </div>
+      <div class="col-12">
+        <div class="text-muted" style="font-size:.78rem;font-weight:600;text-transform:uppercase;">Disease / Condition</div>
+        <div class="mt-1" style="color:#374151;line-height:1.6;">{{ form_data.disease }}</div>
+      </div>
+    </div>
   </div>
-  <div class="btn-group" role="group" aria-label="Basic example">
-    <a href="{% url 'patient_list' %}"><button type="button" class="btn btn-info">Return Patient List</button></a>
-  </div>
-
-  <table class="table table-striped">
-    <thead>
-      <tr>
-        <th scope="col">Name</th>
-        <th scope="col">Age</th>
-        <th scope="col">Gender</th>
-        <th scope="col">Disease</th>
-        <th scope="col">Doctor</th>
-        <th scope="col">Admit_date</th>
-
-        <th scope="col">Action</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>{{ form_data.name }}</td>
-        <td>{{ form_data.age }}</td>
-        <td>{{ form_data.gender }}</td>
-        <td>{{ form_data.disease }}</td>
-        <td>{{ form_data.doctor }}</td>
-        <td>{{ form_data.admit_date }}</td>
-      </tr>
-    </tbody>
-  </table>
+</div>
 {% endblock %}

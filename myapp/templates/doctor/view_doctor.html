@@ -1,81 +1,92 @@
 {% extends 'master/base.html' %}
+{% block nav_doc %}active{% endblock %}
+{% block page_title %}Dr. {{ form_data.name }}{% endblock %}
 
 {% block blockname %}
-  <div class="btn-group" role="group" aria-label="Basic example">
-    <button type="button" class="btn btn-secondary">Username: {{ request.user }}</button>
-    <button type="button" class="btn btn-secondary">User Type: {{ request.user.user_type }}</button>
-    <button type="button" class="btn btn-secondary">Full Name: {{ request.user.full_name }}</button>
+<div class="page-header">
+  <div class="d-flex align-items-center gap-2 flex-wrap">
+    <a href="{% url 'doctor_list' %}" class="btn btn-outline-secondary btn-sm">
+      <i class="bi bi-arrow-left me-1"></i>Doctors
+    </a>
+    <h1 class="mb-0">Dr. {{ form_data.name }}</h1>
   </div>
-
-  {% if request.user.user_type == 'Admin' %}
-    <div class="btn-group" role="group" aria-label="Basic example">
-      <a href="{% url 'add_doctor' %}"><button type="button" class="btn btn-primary">Add Doctor</button></a>
-    </div>
+  {% if request.user.user_type != 'Patient' %}
+    <a href="{% url 'add_doctor' %}" class="btn btn-primary btn-sm">
+      <i class="bi bi-plus-lg me-1"></i>Add Doctor
+    </a>
   {% endif %}
+</div>
 
-  <div class="btn-group" role="group" aria-label="Basic example">
-    <a href="{% url 'doctor_list' %}"><button type="button" class="btn btn-info">Return Doctor List</button></a>
-  </div>
-
-  <div class="mt-4 mb-2">
-    <button type="button" class="btn btn-outline-secondary">Doctor Name</button>
-  </div>
-  <table class="table table-striped">
-    <thead>
-      <tr>
-        <th scope="col">Name</th>
-        <th scope="col">Email</th>
-        <th scope="col">Phone</th>
-        <th scope="col">specialization</th>
-        <th scope="col">Department</th>
-        <th scope="col">Joining Date</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>{{ form_data.name }}</td>
-        <td>{{ form_data.email }}</td>
-        <td>{{ form_data.phone }}</td>
-        <td>{{ form_data.specialization }}</td>
-        <td>{{ form_data.department }}</td>
-        <td>{{ form_data.joining_date }}</td>
-      </tr>
-    </tbody>
-  </table>
-
-  {% if request.user.user_type == 'Patient' %}
-
-  {% else %}
-    <div class="mt-4 mb-2">
-      <button type="button" class="btn btn-outline-secondary">Patient List</button>
+<!-- Doctor info card -->
+<div class="card mb-4" style="max-width:640px;">
+  <div class="card-body p-4">
+    <div class="d-flex align-items-center gap-3 mb-4">
+      <div style="width:56px;height:56px;background:var(--primary-light);border-radius:14px;display:flex;align-items:center;justify-content:center;color:var(--primary);font-size:1.5rem;flex-shrink:0;">
+        <i class="bi bi-person-badge"></i>
+      </div>
+      <div>
+        <div class="fw-bold" style="font-size:1.1rem;">Dr. {{ form_data.name }}</div>
+        <span style="background:#e8f3fc;color:#0f6cbd;padding:.2rem .6rem;border-radius:999px;font-size:.8rem;font-weight:600;">
+          {{ form_data.specialization }}
+        </span>
+      </div>
     </div>
-    <table class="table table-striped">
+
+    <div class="row g-3">
+      <div class="col-sm-6">
+        <div class="text-muted" style="font-size:.78rem;font-weight:600;text-transform:uppercase;">Email</div>
+        <a href="mailto:{{ form_data.email }}" class="fw-semibold mt-1 d-block text-decoration-none">{{ form_data.email }}</a>
+      </div>
+      <div class="col-sm-6">
+        <div class="text-muted" style="font-size:.78rem;font-weight:600;text-transform:uppercase;">Phone</div>
+        <div class="fw-semibold mt-1">{{ form_data.phone }}</div>
+      </div>
+      <div class="col-sm-6">
+        <div class="text-muted" style="font-size:.78rem;font-weight:600;text-transform:uppercase;">Department</div>
+        <div class="fw-semibold mt-1">{{ form_data.department }}</div>
+      </div>
+      <div class="col-sm-6">
+        <div class="text-muted" style="font-size:.78rem;font-weight:600;text-transform:uppercase;">Joining Date</div>
+        <div class="fw-semibold mt-1">{{ form_data.joining_date|date:"M d, Y" }}</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Patient list (hidden from patients) -->
+{% if request.user.user_type != 'Patient' %}
+  <div class="section-title">Assigned Patients</div>
+  <div class="table-card">
+    <table class="table table-hover">
       <thead>
         <tr>
-          <th scope="col">#</th>
-          <th scope="col">Name</th>
-          <th scope="col">Age</th>
-          <th scope="col">Gender</th>
-          <th scope="col">Disease</th>
-          <th scope="col">Doctor</th>
-          <th scope="col">Admit_date</th>
+          <th>#</th>
+          <th>Name</th>
+          <th>Age</th>
+          <th>Gender</th>
+          <th>Disease</th>
+          <th>Admitted</th>
         </tr>
       </thead>
       <tbody>
-        {% for x in patient_data %}
+        {% for patient in patient_data %}
+          {% if patient.doctor == form_data %}
+            <tr>
+              <td class="text-muted">{{ forloop.counter }}</td>
+              <td class="fw-semibold">{{ patient.name }}</td>
+              <td>{{ patient.age }}</td>
+              <td>{{ patient.gender }}</td>
+              <td>{{ patient.disease|truncatechars:50 }}</td>
+              <td class="text-muted" style="font-size:.8125rem;">{{ patient.admit_date|date:"M d, Y" }}</td>
+            </tr>
+          {% endif %}
+        {% empty %}
           <tr>
-            {% if x.doctor == form_data %}
-              <th scope="row">{{ forloop.counter }}</th>
-              <td>{{ x.name }}</td>
-              <td>{{ x.age }}</td>
-              <td>{{ x.gender }}</td>
-              <td>{{ x.disease }}</td>
-              <td>{{ x.doctor }}</td>
-              <td>{{ x.admit_date }}</td>
-            {% endif %}
+            <td colspan="6" class="text-center text-muted py-4">No patients assigned to this doctor yet.</td>
           </tr>
         {% endfor %}
       </tbody>
     </table>
-  {% endif %}
+  </div>
+{% endif %}
 {% endblock %}

@@ -1,53 +1,59 @@
 {% extends 'master/base.html' %}
+{% block nav_pat %}active{% endblock %}
+{% block page_title %}Patients{% endblock %}
 
 {% block blockname %}
-  <div class="btn-group" role="group" aria-label="Basic example">
-    <button type="button" class="btn btn-secondary">Username: {{ request.user }}</button>
-    <button type="button" class="btn btn-secondary">User Type: {{ request.user.user_type }}</button>
-    <button type="button" class="btn btn-secondary">Full Name: {{ request.user.full_name }}</button>
-  </div>
+<div class="page-header">
+  <h1>All Patients</h1>
+  {% if request.user.user_type != 'Patient' %}
+    <a href="{% url 'add_patient' %}" class="btn btn-primary">
+      <i class="bi bi-plus-lg me-1"></i>Add Patient
+    </a>
+  {% endif %}
+</div>
 
-  <div class="btn-group" role="group" aria-label="Basic example">
-    <a href="{% url 'add_patient' %}"><button type="button" class="btn btn-primary">Add Patient</button></a>
-  </div>
-
-  <table class="table table-striped">
+{% if form_data %}
+<div class="table-card">
+  <table class="table table-hover">
     <thead>
       <tr>
-        <th scope="col">#</th>
-        <th scope="col">Name</th>
-        <th scope="col">Age</th>
-        <th scope="col">Gender</th>
-        <th scope="col">Disease</th>
-        <th scope="col">Doctor</th>
-        <th scope="col">Admit_date</th>
-
-        {% if request.user.user_type == 'Patient' %}
-
-        {% else %}
-          <th scope="col">Action</th>
+        <th>#</th>
+        <th>Name</th>
+        <th>Age</th>
+        <th>Gender</th>
+        <th>Disease</th>
+        <th>Doctor</th>
+        <th>Admitted</th>
+        {% if request.user.user_type != 'Patient' %}
+          <th class="text-end">Actions</th>
         {% endif %}
       </tr>
     </thead>
     <tbody>
-      {% for x in form_data %}
+      {% for patient in form_data %}
         <tr>
-          <th scope="row">{{ forloop.counter }}</th>
-          <td>{{ x.name }}</td>
-          <td>{{ x.age }}</td>
-          <td>{{ x.gender }}</td>
-          <td>{{ x.disease }}</td>
-          <td>{{ x.doctor }}</td>
-          <td>{{ x.admit_date }}</td>
-
-          {% if request.user.user_type == 'Patient' %}
-
-          {% else %}
-            <td>
-              <div class="btn-group" role="group" aria-label="Basic example">
-                <a href="{% url 'edit_patient' x.id %}"><button type="button" class="btn btn-info">Edit</button></a>
-                <a href="{% url 'delete_patient' x.id %}"><button type="button" class="btn btn-secondary">Delete</button></a>
-                <a href="{% url 'view_patient' x.id %}"><button type="button" class="btn btn-primary">View</button></a>
+          <td class="text-muted">{{ forloop.counter }}</td>
+          <td class="fw-semibold">{{ patient.name }}</td>
+          <td>{{ patient.age }}</td>
+          <td>{{ patient.gender }}</td>
+          <td style="max-width:180px;color:#4b5563;">{{ patient.disease|truncatechars:60 }}</td>
+          <td class="text-muted">{{ patient.doctor }}</td>
+          <td class="text-muted" style="font-size:.8125rem;white-space:nowrap;">{{ patient.admit_date|date:"M d, Y" }}</td>
+          {% if request.user.user_type != 'Patient' %}
+            <td class="text-end">
+              <div class="d-flex justify-content-end gap-1">
+                <a href="{% url 'view_patient' patient.id %}" class="btn-icon" title="View">
+                  <i class="bi bi-eye"></i>
+                </a>
+                <a href="{% url 'edit_patient' patient.id %}" class="btn-icon" title="Edit">
+                  <i class="bi bi-pencil"></i>
+                </a>
+                <a href="{% url 'delete_patient' patient.id %}"
+                   class="btn-icon danger"
+                   title="Delete"
+                   onclick="return confirm('Delete patient {{ patient.name }}? This cannot be undone.')">
+                  <i class="bi bi-trash"></i>
+                </a>
               </div>
             </td>
           {% endif %}
@@ -55,4 +61,14 @@
       {% endfor %}
     </tbody>
   </table>
+</div>
+{% else %}
+  <div class="text-center py-5 text-muted">
+    <i class="bi bi-people" style="font-size:2.5rem;"></i>
+    <p class="mt-2 mb-1 fw-semibold">No patients registered yet</p>
+    {% if request.user.user_type != 'Patient' %}
+      <a href="{% url 'add_patient' %}" class="btn btn-primary btn-sm mt-1">Add first patient</a>
+    {% endif %}
+  </div>
+{% endif %}
 {% endblock %}

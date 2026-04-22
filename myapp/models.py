@@ -57,7 +57,7 @@ class DoctorModel(models.Model):
 class PatientModel(models.Model):
     name = models.CharField(max_length=120, null=True)
     age = models.IntegerField(null=True)
-    gender = models.der = models.CharField(max_length=120, null=True)
+    gender =models.CharField(max_length=120, null=True)
     disease = models.TextField(null=True)
     doctor = models.ForeignKey(DoctorModel, on_delete=models.CASCADE)
     admit_date = models.DateField(auto_now_add=True, null=True)

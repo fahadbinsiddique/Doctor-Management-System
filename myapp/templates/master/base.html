@@ -1,25 +1,445 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <!-- Required meta tags -->
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}{{ title|default:"Hospital Management" }}{% endblock %}</title>
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-    <title>{{title}}</title>
+    <style>
+      :root {
+        --primary:     #0f6cbd;
+        --primary-light: #e8f3fc;
+        --accent:      #00b4a0;
+        --danger:      #d93025;
+        --warning:     #f59e0b;
+        --text-main:   #1a1f36;
+        --text-muted:  #6b7280;
+        --border:      #e5e7eb;
+        --bg-body:     #f4f6fb;
+        --card-bg:     #ffffff;
+        --sidebar-w:   240px;
+      }
+
+      *, *::before, *::after { box-sizing: border-box; }
+
+      body {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        background: var(--bg-body);
+        color: var(--text-main);
+        margin: 0;
+        min-height: 100vh;
+      }
+
+      /* ── Sidebar ─────────────────────────────────── */
+      .sidebar {
+        position: fixed;
+        top: 0; left: 0; bottom: 0;
+        width: var(--sidebar-w);
+        background: #ffffff;
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        z-index: 1000;
+        transition: transform .25s ease;
+      }
+
+      .sidebar-brand {
+        padding: 1.5rem 1.25rem 1rem;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        gap: .625rem;
+        text-decoration: none;
+        color: var(--text-main);
+      }
+
+      .sidebar-brand .brand-icon {
+        width: 36px; height: 36px;
+        background: var(--primary);
+        border-radius: 10px;
+        display: flex; align-items: center; justify-content: center;
+        color: #fff;
+        font-size: 1.1rem;
+        flex-shrink: 0;
+      }
+
+      .sidebar-brand .brand-text {
+        font-size: .95rem;
+        font-weight: 700;
+        line-height: 1.2;
+      }
+
+      .sidebar-brand .brand-text small {
+        display: block;
+        font-weight: 400;
+        font-size: .7rem;
+        color: var(--text-muted);
+      }
+
+      .sidebar-nav { flex: 1; padding: 1rem 0; overflow-y: auto; }
+
+      .nav-section-label {
+        font-size: .6875rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: .08em;
+        color: var(--text-muted);
+        padding: .5rem 1.25rem .25rem;
+      }
+
+      .sidebar-link {
+        display: flex;
+        align-items: center;
+        gap: .625rem;
+        padding: .55rem 1.25rem;
+        color: var(--text-muted);
+        text-decoration: none;
+        font-size: .875rem;
+        font-weight: 500;
+        border-radius: 0;
+        transition: background .15s, color .15s;
+        margin: .1rem .75rem;
+        border-radius: 8px;
+      }
+
+      .sidebar-link i { font-size: 1rem; flex-shrink: 0; }
+
+      .sidebar-link:hover {
+        background: var(--primary-light);
+        color: var(--primary);
+      }
+
+      .sidebar-link.active {
+        background: var(--primary-light);
+        color: var(--primary);
+        font-weight: 600;
+      }
+
+      .sidebar-footer {
+        padding: 1rem 1.25rem;
+        border-top: 1px solid var(--border);
+        font-size: .8125rem;
+        color: var(--text-muted);
+      }
+
+      /* ── Topbar ──────────────────────────────────── */
+      .topbar {
+        position: fixed;
+        top: 0;
+        left: var(--sidebar-w);
+        right: 0;
+        height: 60px;
+        background: #fff;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        padding: 0 1.5rem;
+        gap: 1rem;
+        z-index: 999;
+      }
+
+      .topbar-title {
+        font-size: 1rem;
+        font-weight: 600;
+        flex: 1;
+      }
+
+      .user-badge {
+        display: flex;
+        align-items: center;
+        gap: .5rem;
+        background: var(--primary-light);
+        color: var(--primary);
+        border-radius: 999px;
+        padding: .35rem .75rem .35rem .4rem;
+        font-size: .8125rem;
+        font-weight: 600;
+      }
+
+      .user-badge .avatar {
+        width: 28px; height: 28px;
+        background: var(--primary);
+        border-radius: 50%;
+        color: #fff;
+        display: flex; align-items: center; justify-content: center;
+        font-size: .75rem;
+        font-weight: 700;
+        flex-shrink: 0;
+      }
+
+      .role-badge {
+        font-size: .6875rem;
+        font-weight: 600;
+        padding: .2rem .5rem;
+        border-radius: 999px;
+        background: #e0fdf4;
+        color: #065f46;
+      }
+
+      /* ── Main content ────────────────────────────── */
+      .main-content {
+        margin-left: var(--sidebar-w);
+        padding-top: 60px;
+        min-height: 100vh;
+      }
+
+      .page-body {
+        padding: 1.75rem 2rem;
+        max-width: 1280px;
+      }
+
+      /* ── Page header ─────────────────────────────── */
+      .page-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .page-header h1 {
+        font-size: 1.375rem;
+        font-weight: 700;
+        margin: 0;
+      }
+
+      /* ── Cards ───────────────────────────────────── */
+      .card {
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        box-shadow: 0 1px 3px rgba(0,0,0,.04);
+        background: var(--card-bg);
+      }
+
+      /* ── Tables ──────────────────────────────────── */
+      .table-card {
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        overflow: hidden;
+        background: #fff;
+        box-shadow: 0 1px 3px rgba(0,0,0,.04);
+      }
+
+      .table { margin: 0; }
+
+      .table thead th {
+        background: #f8fafc;
+        font-size: .75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: .06em;
+        color: var(--text-muted);
+        border-bottom: 1px solid var(--border);
+        padding: .875rem 1rem;
+        white-space: nowrap;
+      }
+
+      .table tbody td, .table tbody th {
+        padding: .875rem 1rem;
+        vertical-align: middle;
+        border-color: var(--border);
+        font-size: .875rem;
+      }
+
+      .table tbody tr:hover { background: #fafbfd; }
+
+      /* ── Buttons ─────────────────────────────────── */
+      .btn {
+        font-size: .8125rem;
+        font-weight: 600;
+        border-radius: 8px;
+        padding: .45rem .9rem;
+        transition: all .15s;
+      }
+
+      .btn-primary {
+        background: var(--primary);
+        border-color: var(--primary);
+      }
+
+      .btn-primary:hover {
+        background: #0a55a8;
+        border-color: #0a55a8;
+      }
+
+      .btn-sm { padding: .3rem .65rem; font-size: .75rem; }
+
+      .btn-icon {
+        width: 32px; height: 32px;
+        padding: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: #fff;
+        color: var(--text-muted);
+        transition: all .15s;
+      }
+
+      .btn-icon:hover { background: var(--primary-light); color: var(--primary); border-color: var(--primary-light); }
+      .btn-icon.danger:hover { background: #fee2e2; color: var(--danger); border-color: #fee2e2; }
+
+      /* ── Alerts ──────────────────────────────────── */
+      .alert { border-radius: 10px; font-size: .875rem; }
+
+      /* ── Stat cards ──────────────────────────────── */
+      .stat-card {
+        border-radius: 12px;
+        padding: 1.25rem 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        background: #fff;
+        border: 1px solid var(--border);
+        box-shadow: 0 1px 3px rgba(0,0,0,.04);
+      }
+
+      .stat-icon {
+        width: 48px; height: 48px;
+        border-radius: 12px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1.3rem;
+        flex-shrink: 0;
+      }
+
+      .stat-label { font-size: .8125rem; color: var(--text-muted); font-weight: 500; }
+      .stat-value { font-size: 1.6rem; font-weight: 700; line-height: 1.1; }
+
+      /* ── Responsive sidebar ──────────────────────── */
+      @media (max-width: 768px) {
+        .sidebar { transform: translateX(-100%); }
+        .sidebar.open { transform: translateX(0); }
+        .topbar, .main-content { left: 0; margin-left: 0; }
+        .page-body { padding: 1.25rem 1rem; }
+      }
+
+      /* ── Misc ────────────────────────────────────── */
+      a { color: inherit; }
+      a:hover { color: var(--primary); }
+
+      .text-muted { color: var(--text-muted) !important; }
+
+      .section-title {
+        font-size: .8125rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: .06em;
+        color: var(--text-muted);
+        margin-bottom: .75rem;
+      }
+
+      /* Toggler for mobile */
+      .sidebar-toggler {
+        display: none;
+        background: none;
+        border: none;
+        font-size: 1.25rem;
+        color: var(--text-main);
+        cursor: pointer;
+        padding: .25rem;
+      }
+
+      @media (max-width: 768px) { .sidebar-toggler { display: block; } }
+    </style>
+
+    {% block extra_head %}{% endblock %}
   </head>
   <body>
-    
-    {% include 'master/nav.html' %}
-    
-   <div class="container">
-    <h1>{{heading}}</h1>
-     {% block blockname %}
-        
-    {% endblock blockname %}
-   </div>
-        
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <a class="sidebar-brand" href="{% url 'home' %}">
+        <div class="brand-icon"><i class="bi bi-hospital"></i></div>
+        <div class="brand-text">
+          MediCare
+          <small>Hospital Management</small>
+        </div>
+      </a>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section-label">Main</div>
+        <a class="sidebar-link {% block nav_dashboard %}{% endblock %}" href="{% url 'dashboard' %}">
+          <i class="bi bi-grid-1x2"></i> Dashboard
+        </a>
+
+        <div class="nav-section-label mt-2">Management</div>
+        <a class="sidebar-link {% block nav_dept %}{% endblock %}" href="{% url 'department_list' %}">
+          <i class="bi bi-building"></i> Departments
+        </a>
+        <a class="sidebar-link {% block nav_doc %}{% endblock %}" href="{% url 'doctor_list' %}">
+          <i class="bi bi-person-badge"></i> Doctors
+        </a>
+        <a class="sidebar-link {% block nav_pat %}{% endblock %}" href="{% url 'patient_list' %}">
+          <i class="bi bi-people"></i> Patients
+        </a>
+
+        <div class="nav-section-label mt-2">Account</div>
+        <a class="sidebar-link {% block nav_profile %}{% endblock %}" href="{% url 'profile' %}">
+          <i class="bi bi-person-circle"></i> My Profile
+        </a>
+        <a class="sidebar-link" href="{% url 'logout_page' %}">
+          <i class="bi bi-box-arrow-right"></i> Logout
+        </a>
+      </nav>
+
+      {% if request.user.is_authenticated %}
+      <div class="sidebar-footer">
+        <div class="d-flex align-items-center gap-2">
+          <div style="width:32px;height:32px;background:var(--primary-light);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--primary);font-weight:700;font-size:.8rem;">
+            {{ request.user.username|first|upper }}
+          </div>
+          <div>
+            <div style="font-size:.8125rem;font-weight:600;color:var(--text-main);">{{ request.user.full_name|default:request.user.username }}</div>
+            <div style="font-size:.7rem;color:var(--text-muted);">{{ request.user.user_type }}</div>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+    </aside>
+
+    <!-- Topbar -->
+    <header class="topbar">
+      <button class="sidebar-toggler" onclick="document.getElementById('sidebar').classList.toggle('open')">
+        <i class="bi bi-list"></i>
+      </button>
+      <span class="topbar-title">{% block page_title %}{{ heading|default:"Dashboard" }}{% endblock %}</span>
+      {% if request.user.is_authenticated %}
+        <span class="role-badge">{{ request.user.user_type }}</span>
+        <a href="{% url 'profile' %}" class="user-badge text-decoration-none">
+          <div class="avatar">{{ request.user.username|first|upper }}</div>
+          {{ request.user.username }}
+        </a>
+      {% endif %}
+    </header>
+
+    <!-- Main content -->
+    <main class="main-content">
+      <div class="page-body">
+
+        {% if messages %}
+          {% for message in messages %}
+            <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show" role="alert">
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+          {% endfor %}
+        {% endif %}
+
+        {% block blockname %}{% endblock %}
+      </div>
+    </main>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    {% block extra_js %}{% endblock %}
   </body>
 </html>

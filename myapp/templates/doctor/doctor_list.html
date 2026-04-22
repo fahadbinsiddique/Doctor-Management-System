@@ -1,68 +1,70 @@
 {% extends 'master/base.html' %}
+{% block nav_doc %}active{% endblock %}
+{% block page_title %}Doctors{% endblock %}
 
 {% block blockname %}
-  <div class="my-2">
-    <div class="btn-group" role="group" aria-label="Basic example">
-      <button type="button" class="btn btn-secondary">Username: {{ request.user }}</button>
-      <button type="button" class="btn btn-secondary">User Type: {{ request.user.user_type }}</button>
-      <button type="button" class="btn btn-secondary">Full Name: {{ request.user.full_name }}</button>
-    </div>
+<div class="page-header">
+  <h1>All Doctors</h1>
+  {% if request.user.user_type != 'Patient' %}
+    <a href="{% url 'add_doctor' %}" class="btn btn-primary">
+      <i class="bi bi-plus-lg me-1"></i>Add Doctor
+    </a>
+  {% endif %}
+</div>
 
-    {% if request.user.user_type == 'Patient' %}
-
-    {% else %}
-      <div class="btn-group" role="group" aria-label="Basic example">
-        <a href="{% url 'add_doctor' %}"><button type="button" class="btn btn-primary">Add Doctor</button></a>
-      </div>
-    {% endif %}
-  </div>
-
-  <table class="table table-striped">
+{% if form_data %}
+<div class="table-card">
+  <table class="table table-hover">
     <thead>
       <tr>
-        <th scope="col">#</th>
-        <th scope="col">Name</th>
-        <th scope="col">Email</th>
-        <th scope="col">Phone</th>
-        <th scope="col">specialization</th>
-        <th scope="col">Department</th>
-        <th scope="col">Joining Date</th>
-
-        {% if request.user.user_type == 'Patient' %}
-
-        {% else %}
-          <th scope="col">Action</th>
+        <th>#</th>
+        <th>Doctor</th>
+        <th>Email</th>
+        <th>Phone</th>
+        <th>Specialization</th>
+        <th>Department</th>
+        <th>Joined</th>
+        {% if request.user.user_type != 'Patient' %}
+          <th class="text-end">Actions</th>
         {% endif %}
       </tr>
     </thead>
     <tbody>
-      {% for x in form_data %}
+      {% for doctor in form_data %}
         <tr>
-          <th scope="row">{{ forloop.counter }}</th>
+          <td class="text-muted">{{ forloop.counter }}</td>
           <td>
-            <div>
-              <span>{{ x.name }}</span>
-              {% if request.user.user_type == 'Patient' %}
-
-              {% else %}
-                <span><a href="{% url 'view_doctor' x.id %}"><button type="button" class="btn btn-outline-primary btn-sm">View Paitents</button></a></span>
-              {% endif %}
-            </div>
+            <div class="fw-semibold">{{ doctor.name }}</div>
+            {% if request.user.user_type != 'Patient' %}
+              <a href="{% url 'view_doctor' doctor.id %}" style="font-size:.8rem;" class="text-muted">
+                <i class="bi bi-people me-1"></i>View patients
+              </a>
+            {% endif %}
           </td>
-          <td>{{ x.email }}</td>
-          <td>{{ x.phone }}</td>
-          <td>{{ x.specialization }}</td>
-          <td>{{ x.department }}</td>
-          <td>{{ x.joining_date }}</td>
-
-          {% if request.user.user_type == 'Patient' %}
-
-          {% else %}
-            <td>
-              <div class="btn-group" role="group" aria-label="Basic example">
-                <a href="{% url 'edit_doctor' x.id %}"><button type="button" class="btn btn-info">Edit</button></a>
-                <a href="{% url 'delete_doctor' x.id %}"><button type="button" class="btn btn-secondary">Delete</button></a>
-                <a href="{% url 'view_doctor' x.id %}"><button type="button" class="btn btn-primary">View</button></a>
+          <td><a href="mailto:{{ doctor.email }}" class="text-muted">{{ doctor.email }}</a></td>
+          <td class="text-muted">{{ doctor.phone }}</td>
+          <td>
+            <span style="background:#e8f3fc;color:#0f6cbd;padding:.2rem .55rem;border-radius:999px;font-size:.78rem;font-weight:600;">
+              {{ doctor.specialization }}
+            </span>
+          </td>
+          <td class="text-muted">{{ doctor.department }}</td>
+          <td class="text-muted" style="font-size:.8125rem;white-space:nowrap;">{{ doctor.joining_date|date:"M d, Y" }}</td>
+          {% if request.user.user_type != 'Patient' %}
+            <td class="text-end">
+              <div class="d-flex justify-content-end gap-1">
+                <a href="{% url 'view_doctor' doctor.id %}" class="btn-icon" title="View patients">
+                  <i class="bi bi-eye"></i>
+                </a>
+                <a href="{% url 'edit_doctor' doctor.id %}" class="btn-icon" title="Edit">
+                  <i class="bi bi-pencil"></i>
+                </a>
+                <a href="{% url 'delete_doctor' doctor.id %}"
+                   class="btn-icon danger"
+                   title="Delete"
+                   onclick="return confirm('Delete Dr. {{ doctor.name }}? This cannot be undone.')">
+                  <i class="bi bi-trash"></i>
+                </a>
               </div>
             </td>
           {% endif %}
@@ -70,4 +72,14 @@
       {% endfor %}
     </tbody>
   </table>
+</div>
+{% else %}
+  <div class="text-center py-5 text-muted">
+    <i class="bi bi-person-badge" style="font-size:2.5rem;"></i>
+    <p class="mt-2 mb-1 fw-semibold">No doctors registered yet</p>
+    {% if request.user.user_type != 'Patient' %}
+      <a href="{% url 'add_doctor' %}" class="btn btn-primary btn-sm mt-1">Add first doctor</a>
+    {% endif %}
+  </div>
+{% endif %}
 {% endblock %}

@@ -1,65 +1,85 @@
 {% extends 'master/base.html' %}
+{% block nav_dept %}active{% endblock %}
+{% block page_title %}{{ form_data.name }}{% endblock %}
 
 {% block blockname %}
-  <div class="btn-group" role="group" aria-label="Basic example">
-    <button type="button" class="btn btn-secondary">Username: {{ request.user }}</button>
-    <button type="button" class="btn btn-secondary">User Type: {{ request.user.user_type }}</button>
-    <button type="button" class="btn btn-secondary">Full Name: {{ request.user.full_name }}</button>
+<div class="page-header">
+  <div class="d-flex align-items-center gap-2 flex-wrap">
+    <a href="{% url 'department_list' %}" class="btn btn-outline-secondary btn-sm">
+      <i class="bi bi-arrow-left me-1"></i>Departments
+    </a>
+    <h1 class="mb-0">{{ form_data.name }}</h1>
   </div>
-
   {% if request.user.user_type == 'Admin' %}
-    <div class="btn-group" role="group" aria-label="Basic example">
-      <a href="{% url 'add_department' %}"><button type="button" class="btn btn-primary">Add Department</button></a>
+    <a href="{% url 'add_department' %}" class="btn btn-primary btn-sm">
+      <i class="bi bi-plus-lg me-1"></i>Add Department
+    </a>
+  {% endif %}
+</div>
+
+<!-- Department info card -->
+<div class="card mb-4" style="max-width:600px;">
+  <div class="card-body p-4">
+    <div class="section-title mb-3">Department Details</div>
+    <div class="row g-3">
+      <div class="col-6">
+        <div class="text-muted" style="font-size:.78rem;font-weight:600;text-transform:uppercase;">Name</div>
+        <div class="fw-semibold mt-1">{{ form_data.name }}</div>
+      </div>
+      <div class="col-6">
+        <div class="text-muted" style="font-size:.78rem;font-weight:600;text-transform:uppercase;">Created</div>
+        <div class="fw-semibold mt-1">{{ form_data.created_at|date:"M d, Y" }}</div>
+      </div>
+      <div class="col-12">
+        <div class="text-muted" style="font-size:.78rem;font-weight:600;text-transform:uppercase;">Description</div>
+        <div class="mt-1" style="color:#374151;">{{ form_data.description }}</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Doctors in this department -->
+<div class="section-title">Doctors in {{ form_data.name }}</div>
+
+{% with dept_doctors=all_doctor|dictsort:"name" %}
+  {% if all_doctor %}
+    <div class="table-card">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Specialization</th>
+            <th>Joined</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for doctor in all_doctor %}
+            {% if doctor.department == form_data %}
+              <tr>
+                <td class="text-muted">{{ forloop.counter }}</td>
+                <td class="fw-semibold">{{ doctor.name }}</td>
+                <td><a href="mailto:{{ doctor.email }}" class="text-muted">{{ doctor.email }}</a></td>
+                <td class="text-muted">{{ doctor.phone }}</td>
+                <td>
+                  <span style="background:#e8f3fc;color:#0f6cbd;padding:.2rem .5rem;border-radius:999px;font-size:.78rem;font-weight:600;">
+                    {{ doctor.specialization }}
+                  </span>
+                </td>
+                <td class="text-muted" style="font-size:.8125rem;">{{ doctor.joining_date|date:"M d, Y" }}</td>
+              </tr>
+            {% endif %}
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <div class="text-center py-4 text-muted">
+      <i class="bi bi-person-badge" style="font-size:2rem;"></i>
+      <p class="mt-2 mb-0">No doctors assigned to this department yet.</p>
     </div>
   {% endif %}
-
-  <div class="btn-group" role="group" aria-label="Basic example">
-    <a href="{% url 'department_list' %}"><button type="button" class="btn btn-info">Return Department List</button></a>
-  </div>
-
-  <table class="table table-striped">
-    <thead>
-      <tr>
-        <th scope="col">Name</th>
-        <th scope="col">Description</th>
-        <th scope="col">created_at</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>{{ form_data.name }}</td>
-        <td>{{ form_data.description }}</td>
-        <td>{{ form_data.created_at }}</td>
-      </tr>
-    </tbody>
-  </table>
-
-  <table class="table table-striped">
-    <thead>
-      <tr>
-        <th scope="col">#</th>
-        <th scope="col">Name</th>
-        <th scope="col">Email</th>
-        <th scope="col">Phone</th>
-        <th scope="col">specialization</th>
-        <th scope="col">Department</th>
-        <th scope="col">Joining Date</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for x in all_doctor %}
-        {% if x.department == form_data %}
-          <tr>
-            <th scope="row">{{ forloop.counter }}</th>
-            <td>{{ x.name }}</td>
-            <td>{{ x.email }}</td>
-            <td>{{ x.phone }}</td>
-            <td>{{ x.specialization }}</td>
-            <td>{{ x.department }}</td>
-            <td>{{ x.joining_date }}</td>
-          </tr>
-        {% endif %}
-      {% endfor %}
-    </tbody>
-  </table>
+{% endwith %}
 {% endblock %}

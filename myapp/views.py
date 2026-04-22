@@ -82,6 +82,7 @@ def home(request):
     return render(request, "home.html")
 
 
+@login_required
 def profile(request):
 
     return render(request, "profile.html")
@@ -235,8 +236,8 @@ def patient_list(request):
     form_data = PatientModel.objects.all()
     context = {
         "form_data": form_data,
-        "heading": "All Paitent Info",
-        "title": "Paitent List",
+        "heading": "All Patient Info",
+        "title": "Patient List",
     }
     return render(request, "patient/patient_list.html", context)
 
@@ -252,9 +253,9 @@ def edit_patient(request, d_id):
     form_data = Add_Patient_Form(instance=selected_department)
     context = {
         "form_data": form_data,
-        "title": "Edit Paitent Info",
-        "heading": "Edit Paitent Info",
-        "btn": "Update Paitent",
+        "title": "Edit Patient Info",
+        "heading": "Edit Patient Info",
+        "btn": "Update Patient",
     }
     return render(request, "master/base-form.html", context)
 

@@ -1,28 +1,136 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Login — MediCare Hospital</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous" />
+    <style>
+      :root {
+        --primary: #0f6cbd;
+        --primary-light: #e8f3fc;
+      }
+      body {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        background: linear-gradient(135deg, #e8f3fc 0%, #f0f9ff 60%, #e0f2fe 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
 
-    <title>Hello, world!</title>
+      .login-card {
+        width: 100%;
+        max-width: 420px;
+        background: #fff;
+        border-radius: 20px;
+        box-shadow: 0 8px 40px rgba(15,108,189,.12);
+        padding: 2.5rem 2.25rem;
+      }
+
+      .brand-icon {
+        width: 52px; height: 52px;
+        background: var(--primary);
+        border-radius: 14px;
+        display: flex; align-items: center; justify-content: center;
+        color: #fff;
+        font-size: 1.4rem;
+        margin: 0 auto 1.25rem;
+        box-shadow: 0 4px 16px rgba(15,108,189,.25);
+      }
+
+      h2 { font-size: 1.5rem; font-weight: 800; text-align: center; margin-bottom: .25rem; }
+      .subtitle { font-size: .875rem; color: #6b7280; text-align: center; margin-bottom: 1.75rem; }
+
+      .form-label { font-size: .875rem; font-weight: 600; margin-bottom: .35rem; }
+
+      input[type=text], input[type=password], input[type=email] {
+        display: block; width: 100%;
+        padding: .6rem .875rem;
+        font-size: .9rem;
+        border: 1.5px solid #e5e7eb;
+        border-radius: 10px;
+        font-family: inherit;
+        transition: border-color .15s, box-shadow .15s;
+      }
+
+      input:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(15,108,189,.12);
+      }
+
+      .btn-login {
+        width: 100%;
+        padding: .7rem;
+        background: var(--primary);
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        font-family: inherit;
+        font-size: .9375rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: background .15s;
+        margin-top: .5rem;
+      }
+
+      .btn-login:hover { background: #0a55a8; }
+
+      .divider { display: flex; align-items: center; gap: .75rem; margin: 1.25rem 0; }
+      .divider::before, .divider::after { content:''; flex:1; height:1px; background:#e5e7eb; }
+      .divider span { font-size: .8rem; color: #9ca3af; white-space: nowrap; }
+
+      .register-links { display: flex; flex-direction: column; gap: .5rem; }
+
+      .register-link {
+        display: flex; align-items: center; justify-content: center; gap: .5rem;
+        padding: .55rem;
+        border: 1.5px solid #e5e7eb;
+        border-radius: 10px;
+        font-size: .875rem;
+        font-weight: 600;
+        color: #374151;
+        text-decoration: none;
+        transition: all .15s;
+      }
+
+      .register-link:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
+
+      /* Django form paragraph styling */
+      form p { margin-bottom: .875rem; }
+      form p label { display: block; font-size: .875rem; font-weight: 600; margin-bottom: .35rem; color: #374151; }
+    </style>
   </head>
   <body>
-    <div class="container mt-4">
-      <h2>Login Your Account</h2>
+    <div class="login-card">
+      <div class="brand-icon"><i class="bi bi-hospital"></i></div>
+      <h2>Welcome Back</h2>
+      <p class="subtitle">Sign in to MediCare Hospital System</p>
 
       <form action="" method="POST">
         {% csrf_token %}
-
         {{ form_data.as_p }}
-
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <button type="submit" class="btn-login">
+          <i class="bi bi-box-arrow-in-right me-2"></i>Sign In
+        </button>
       </form>
-      <h1><a href="{% url 'register_doctor' %}">Registration as Doctor</a></h1>
-      <h1><a href="{% url 'register_patient' %}">Registration as Patient</a></h1>
+
+      <div class="divider"><span>New here? Register as</span></div>
+
+      <div class="register-links">
+        <a href="{% url 'register_doctor' %}" class="register-link">
+          <i class="bi bi-person-badge"></i> Doctor
+        </a>
+        <a href="{% url 'register_patient' %}" class="register-link">
+          <i class="bi bi-person-heart"></i> Patient
+        </a>
+      </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   </body>
 </html>

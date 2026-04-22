@@ -1,54 +1,58 @@
 {% extends 'master/base.html' %}
+{% block nav_dept %}active{% endblock %}
+{% block page_title %}Departments{% endblock %}
 
 {% block blockname %}
-  <div class="mt-4">
-    <div class="btn-group" role="group" aria-label="Basic example">
-      <button type="button" class="btn btn-secondary">Full Name: {{ request.user.full_name }}</button>
-      <button type="button" class="btn btn-secondary">User Type: {{ request.user.user_type }}</button>
-      <button type="button" class="btn btn-secondary">Username: {{ request.user }}</button>
-    </div>
-  </div>
-
+<div class="page-header">
+  <h1>All Departments</h1>
   {% if request.user.user_type == 'Admin' %}
-    <div class="btn-group my-2" role="group" aria-label="Basic example">
-      <a href="{% url 'add_department' %}"><button type="button" class="btn btn-primary">Add Department</button></a>
-    </div>
+    <a href="{% url 'add_department' %}" class="btn btn-primary">
+      <i class="bi bi-plus-lg me-1"></i>Add Department
+    </a>
   {% endif %}
+</div>
 
-  <table class="table table-striped my-2">
+{% if form_data %}
+<div class="table-card">
+  <table class="table table-hover">
     <thead>
       <tr>
-        <th scope="col">#</th>
-        <th scope="col">Name</th>
-        <th scope="col">Description</th>
-        <th scope="col">created_at</th>
-
+        <th>#</th>
+        <th>Department Name</th>
+        <th>Description</th>
+        <th>Created</th>
         {% if request.user.user_type == 'Admin' %}
-          <th scope="col">Action</th>
+          <th class="text-end">Actions</th>
         {% endif %}
       </tr>
     </thead>
-
     <tbody>
-      {% for x in form_data %}
+      {% for dept in form_data %}
         <tr>
-          <th scope="row">{{ forloop.counter }}</th>
-
+          <td class="text-muted">{{ forloop.counter }}</td>
           <td>
-            <div>
-              <span>{{ x.name }}</span> <span><a href="{% url 'view_department' x.id %}"><button type="button" class="btn btn-outline-primary btn-sm">View Doctors</button></a></span>
-            </div>
+            <div class="fw-semibold">{{ dept.name }}</div>
+            <a href="{% url 'view_department' dept.id %}" class="text-muted" style="font-size:.8rem;">
+              <i class="bi bi-people me-1"></i>View doctors
+            </a>
           </td>
-
-          <td>{{ x.description }}</td>
-          <td>{{ x.created_at }}</td>
-
+          <td style="max-width:260px;color:#4b5563;">{{ dept.description|truncatechars:80 }}</td>
+          <td class="text-muted" style="white-space:nowrap;font-size:.8125rem;">{{ dept.created_at|date:"M d, Y" }}</td>
           {% if request.user.user_type == 'Admin' %}
-            <td>
-              <div class="btn-group" role="group" aria-label="Basic example">
-                <a href="{% url 'edit_department' x.id %}"><button type="button" class="btn btn-info btn-sm">Edit</button></a>
-                <a href="{% url 'delete_department' x.id %}"><button type="button" class="btn btn-secondary btn-sm">Delete</button></a>
-                <a href="{% url 'view_department' x.id %}"><button type="button" class="btn btn-primary btn-sm">View</button></a>
+            <td class="text-end">
+              <div class="d-flex justify-content-end gap-1">
+                <a href="{% url 'view_department' dept.id %}" class="btn-icon" title="View">
+                  <i class="bi bi-eye"></i>
+                </a>
+                <a href="{% url 'edit_department' dept.id %}" class="btn-icon" title="Edit">
+                  <i class="bi bi-pencil"></i>
+                </a>
+                <a href="{% url 'delete_department' dept.id %}"
+                   class="btn-icon danger"
+                   title="Delete"
+                   onclick="return confirm('Delete department {{ dept.name }}? This cannot be undone.')">
+                  <i class="bi bi-trash"></i>
+                </a>
               </div>
             </td>
           {% endif %}
@@ -56,4 +60,14 @@
       {% endfor %}
     </tbody>
   </table>
+</div>
+{% else %}
+  <div class="text-center py-5 text-muted">
+    <i class="bi bi-building" style="font-size:2.5rem;"></i>
+    <p class="mt-2 mb-1 fw-semibold">No departments yet</p>
+    {% if request.user.user_type == 'Admin' %}
+      <a href="{% url 'add_department' %}" class="btn btn-primary btn-sm mt-1">Add first department</a>
+    {% endif %}
+  </div>
+{% endif %}
 {% endblock %}
