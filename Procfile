@@ -1,1 +1,0 @@
-web: gunicorn doctor_management_task.wsgi
